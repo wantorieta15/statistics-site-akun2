@@ -23,14 +23,18 @@ function setupCanvas(canvas, width, height) {
   return ctx;
 }
 
-function drawAxes(ctx, x0, y0, x1, y1, maxValue, unit) {
+function drawAxes(ctx, x0, y0, x1, y1, lo, hi, unit) {
+  // Gridlines are labelled with the true plotted scale (lo..hi), so the
+  // tick labels always match the points drawn on them — including series
+  // that dip below zero (real GDP growth, 2020: -9.5%) or start far above
+  // zero (nominal GDP, 2019–2024: $361–462 bn).
   ctx.strokeStyle = PALETTE.grid;
   ctx.fillStyle = PALETTE.faint;
   ctx.font = '11px system-ui, sans-serif';
   ctx.lineWidth = 1;
   ctx.textAlign = 'right';
   for (let i = 0; i <= 4; i++) {
-    const v = (maxValue * i) / 4;
+    const v = lo + ((hi - lo) * i) / 4;
     const y = y1 - ((y1 - y0) * i) / 4;
     ctx.beginPath();
     ctx.moveTo(x0, y);
@@ -71,7 +75,7 @@ export function drawLineChart(canvas, values, options = {}) {
   const max = Math.max(...nums);
   const lo = min < 0 ? min * 1.15 : Math.max(0, min - (max - min) * 0.25);
   const hi = max * 1.08;
-  drawAxes(ctx, x0, y0, x1, y1, hi, options.unit || '');
+  drawAxes(ctx, x0, y0, x1, y1, lo, hi, options.unit || '');
   const px = (i) => x0 + ((x1 - x0) * i) / (values.length - 1);
   const py = (v) => y1 - ((y1 - y0) * (v - lo)) / (hi - lo);
   ctx.beginPath();
@@ -94,7 +98,7 @@ export function drawLineChart(canvas, values, options = {}) {
     ctx.beginPath();
     ctx.arc(px(i), py(pt.value), 3.5, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillText(pt.value.toFixed(options.decimals ?? 1), px(i), py(pt.value) - 8);
+    ctx.fillText(pt.value.toFixed(options.decimals ?? 1), px(i), Math.max(10, py(pt.value) - 8));
   });
   drawXLabels(ctx, values.map((v) => v.label), x0, x1, y1);
 }
@@ -111,7 +115,7 @@ export function drawBarChart(canvas, values, options = {}) {
   const y0 = pad.top;
   const y1 = height - pad.bottom;
   const max = Math.max(...values.map((v) => v.value)) * 1.12;
-  drawAxes(ctx, x0, y0, x1, y1, max, options.unit || '');
+  drawAxes(ctx, x0, y0, x1, y1, 0, max, options.unit || '');
   const slot = (x1 - x0) / values.length;
   const barW = Math.min(46, slot * 0.58);
   ctx.font = 'bold 11px system-ui, sans-serif';

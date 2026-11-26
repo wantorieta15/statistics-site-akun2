@@ -34,7 +34,7 @@ export function renderDashboard(year) {
   return `
   <section class="hero">
     <h1>Philippines by the numbers</h1>
-    <p class="lede">Population, economy, jobs and regions — the headline figures for the Philippines, updated from the latest official releases, in one place.</p>
+    <p class="lede">Population, economy, jobs and regions — the headline figures, from the latest official releases.</p>
     <div class="hero-controls">${yearSelectorHtml(year, 'dash-year')}
       <a class="btn" href="#/economy">Explore the economy →</a>
       <a class="btn btn-ghost" href="#/regions">Compare regions →</a>
@@ -46,7 +46,7 @@ export function renderDashboard(year) {
     ${kpiCard('Inflation', infl.toFixed(1) + '%', 'average headline inflation', 'PSA, ' + year)}
     ${kpiCard('Unemployment', unemp.toFixed(1) + '%', 'of the labour force', 'PSA Labour Force Survey, ' + year)}
     ${kpiCard('Remittances', '$' + remit.toFixed(1) + ' bn', 'personal remittances from overseas Filipinos', 'BSP, ' + year)}
-    ${kpiCard('Poverty rate', HEADLINES.poverty2023.toFixed(1) + '%', 'poverty incidence, 2023 — down from 18.1% in 2021', 'PSA, 2023')}
+    ${kpiCard('Poverty rate', HEADLINES.poverty2023.toFixed(1) + '%', 'poverty incidence, 2023', 'PSA, 2023 · down from 18.1% in 2021')}
   </section>
   <section class="chart-row">
     <article class="panel"><h2>GDP, 2019–2024 (US$ bn)</h2>
